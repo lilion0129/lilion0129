@@ -24,12 +24,12 @@ revenue = [0, 0, 0]
 control = "MANUAL"
 divine = 0
 
-form_class = uic.loadUiType("SHORT.ui")[0]
+# form_class = uic.loadUiType("SHORT.ui")[0]
 client = bybit.bybit(test=False, api_key="CRNPTAOFIQNMCQEREP", api_secret="MJHETUERUADUELHBQLDMOVZZVOKRURDDEQBU")
 
 
 class Worker(QThread):
-    uiRefresh = pyqtSignal()
+    # uiRefresh = pyqtSignal()
 
     def run(self):
         while True:
@@ -45,7 +45,7 @@ class Worker(QThread):
                 global coinName
                 global coinTicker
 
-                self.uiRefresh.emit()
+                # self.uiRefresh.emit()
 
 
                 # print("leverage : ", leverage)
@@ -652,11 +652,11 @@ class Worker(QThread):
 
 
 
-class MyWindow(QMainWindow, form_class):
+class MyWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
+        # self.setupUi(self)
 
         # self.initUpbit()
         # self.checkMyBalance()
@@ -666,9 +666,9 @@ class MyWindow(QMainWindow, form_class):
         # timer.timeout.connect(self.test)
 
         self.worker = Worker()
-        self.worker.uiRefresh.connect(self.refreshUI)
-        self.Short_Buy.clicked.connect(self.worker.manual_BuyFirstCoin)
-        self.Short_Sell.clicked.connect(self.worker.manual_AllCoin)
+        # self.worker.uiRefresh.connect(self.refreshUI)
+        # self.Short_Buy.clicked.connect(self.worker.manual_BuyFirstCoin)
+        # self.Short_Sell.clicked.connect(self.worker.manual_AllCoin)
 
         # self.worker.sellfinished.connect(self.refreshSellCoin)
         self.worker.start()
@@ -692,7 +692,7 @@ class MyWindow(QMainWindow, form_class):
 
 app = QApplication(sys.argv)
 window = MyWindow()
-window.show()
+# window.show()
 app.exec_()
 
 
