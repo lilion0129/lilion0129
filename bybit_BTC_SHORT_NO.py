@@ -122,34 +122,13 @@ def run():
                     if float(wallet['order_margin']) == 0:
                         # 1.거미줄을 넘기고 더 내려간 경우
                         # 매수 주문이 없을때 추가로 거미줄세팅
-                        if importance < 50:
+                        if importance < 90:
                             print("새로운 거미줄 importance : ", importance)
                             if currentPrice > float(get_AverageUnitPrice(coinTicker[i])):
                                 set_SpiderLine(wallet, currentPrice, coinTicker[i], leverage[i], False)
                             else:
                                 set_SpiderLine(wallet, 0, coinTicker[i], leverage[i], False)
 
-                    # 2.거미줄중간에 올라간 경우
-                    # isAnyEnd = self.check_SpiderLine(currentPrice, coinTicker[i])
-                    #
-                    # # isAnyEnd가 True일 경우 모든 매수예약을 취소하고 시장가 기준 -1%부터 새로 거미줄 매수 예약
-                    # if isAnyEnd:
-                    #     if currentPrice > float(self.get_AverageUnitPrice(coinTicker[i])):
-                    #         print("isAnyEnd가 True일 경우 모든 매수예약을 취소하고 시장가 기준 -1%부터 새로 거미줄 매수 예약")
-                    #         self.cancle_BuyReserve(coinTicker[i])
-                    #         self.set_SpiderLine(wallet, currentPrice, coinTicker[i], False)
-
-                    # 3. 거미줄보다 위로 올라간 경우
-                    # 현재 수익률 체크가 필요함
-                    # if self.get_RevenuePercent(currentPrice) >= 20:
-                    #     print("수익률이 20%이상이다. 반매도할까?")
-                    #     myPosition = self.get_MyPosition()
-                    #     qty = myPosition["size"]
-                    #     client.Order.Order_new(side="Sell", symbol="XRPUSD", order_type="Market", qty=qty, time_in_force="GoodTillCancel").result()
-                    # print(coinTicker[i], " 수익률 : ", self.get_RevenuePercent(currentPrice, coinTicker[i], 5))
-                    # RSI가 30보다 작을 경우 전포지션 매도
-                    # print(coinTicker[i], " 수익률 : ",
-                    #       self.get_RevenuePercent(currentPrice, coinTicker[i], leverage[i]))
                     if rsi <= 30:
                         if get_Side(coinTicker[i]) == "BUY":
                             if importance >= 40:
@@ -216,7 +195,7 @@ def buy_FirstCoin( walletData, coinTicker, leverage):
 
         # available = float(walletData['available_balance'])
         usedMargin = float(walletData['used_margin'])
-        orderQty = get_TradeQty(walletData, 20, int(leverage), coinTicker)
+        orderQty = get_TradeQty(walletData, 40, int(leverage), coinTicker)
         print("orderQty : ", orderQty)
 
         if usedMargin <= 0:
@@ -291,7 +270,7 @@ def set_SpiderLine(wallet, currentPrice, coinTicker, leverage, isFirst):
             print("entryPrice : ", entryPrice)
 
             # 한번에 매수할 수량을 구함
-            orderQty = get_TradeQty(wallet, 20, int(leverage), coinTicker)
+            orderQty = get_TradeQty(wallet, 40, int(leverage), coinTicker)
             print("거미줄 orderQty : ", orderQty)
 
             # copyOrderList = []

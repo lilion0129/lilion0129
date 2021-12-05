@@ -17,8 +17,8 @@ isFirstLoop_XRP = True
 isFirstLoop_ETH = True
 isFirstLoop_BTC = True
 
-coinName = ["BTC", "ETH" ,"XRP"]
-coinTicker = ["BTCUSD", "ETHUSD", "XRPUSD"]
+coinName = ["BTC", "ETH"]
+coinTicker = ["BTCUSD", "ETHUSD"]
 revenue = [50]
 leverage = [5, 3, 3]
 spiderGap = [0.01]   #거미줄 간격 10% : 0.01 , 5% : 0.005
@@ -115,7 +115,7 @@ def run():
                 if importance == 0:
                     # 아직 포지션이 없는 상태
                     # RSI조건에 맞으면 매수하려고 대기중
-                    if float(rsi) <= 30:
+                    if float(rsi) <= 35:
                         print("RSI 걸림")
                         buy_FirstCoin(wallet, coinTicker[i], leverage[i])
                         # 포지션을 잡은 최초에만 포지션을 기준으로 거미줄 매수 예약
@@ -137,7 +137,7 @@ def run():
                     if float(wallet['order_margin']) == 0:
                         # 1.거미줄을 넘기고 더 내려간 경우
                         # 매수 주문이 없을때 추가로 거미줄세팅
-                        if importance < 50:
+                        if importance < 95:
                             print("새로운 거미줄 importance : ", importance)
                             if currentPrice < float(get_AverageUnitPrice(coinTicker[i])):
                                 set_SpiderLine(wallet, currentPrice, coinTicker[i], leverage[i], False)
@@ -168,31 +168,31 @@ def run():
                             if importance >= 40:
                                 #손절라인 - 비중이 50%이상일때 조건에 오면 무조건 매도
                                 print(coinTicker[i], " 수익률 : ",
-                                      self.get_RevenuePercent(currentPrice, coinTicker[i], leverage[i]))
-                                myPosition = self.get_MyPosition(coinTicker[i])
+                                      get_RevenuePercent(currentPrice, coinTicker[i], leverage[i]))
+                                myPosition = get_MyPosition(coinTicker[i])
                                 qty = myPosition["size"]
                                 client.Order.Order_new(side="Sell", symbol=coinTicker[i], order_type="Market",
                                                        qty=qty,
                                                        time_in_force="GoodTillCancel").result()
-                                self.cancle_BuyReserve(coinTicker[i])
+                                cancle_BuyReserve(coinTicker[i])
                             else:
-                                if float(self.get_RevenuePercent(currentPrice, coinTicker[i], leverage[i])) >= float(leverage[i]):
+                                if float(get_RevenuePercent(currentPrice, coinTicker[i], leverage[i])) >= float(leverage[i]):
                                     print(coinTicker[i], " 수익률 : ",
-                                          self.get_RevenuePercent(currentPrice, coinTicker[i], leverage[i]))
-                                    myPosition = self.get_MyPosition(coinTicker[i])
+                                          get_RevenuePercent(currentPrice, coinTicker[i], leverage[i]))
+                                    myPosition = get_MyPosition(coinTicker[i])
                                     qty = myPosition["size"]
                                     client.Order.Order_new(side="Sell", symbol=coinTicker[i], order_type="Market", qty=qty,
                                                            time_in_force="GoodTillCancel").result()
-                                    self.cancle_BuyReserve(coinTicker[i])
+                                    cancle_BuyReserve(coinTicker[i])
 
                             # if float(get_RevenuePercent(currentPrice, coinTicker[i], leverage[i])) >= float(leverage[i]):
                             #     print(coinTicker[i], " 수익률 : ",
                             #           get_RevenuePercent(currentPrice, coinTicker[i], leverage[i]))
-                                # myPosition = self.get_MyPosition(coinTicker[i])
-                                # qty = myPosition["size"]
-                                # client.Order.Order_new(side="Sell", symbol=coinTicker[i], order_type="Market", qty=qty,
-                                #                        time_in_force="GoodTillCancel").result()
-                                # self.cancle_BuyReserve(coinTicker[i])
+                            #     myPosition = get_MyPosition(coinTicker[i])
+                            #     qty = myPosition["size"]
+                            #     client.Order.Order_new(side="Sell", symbol=coinTicker[i], order_type="Market", qty=qty,
+                            #                            time_in_force="GoodTillCancel").result()
+                            #     cancle_BuyReserve(coinTicker[i])
 
                 time.sleep(0.5)
 
@@ -228,7 +228,7 @@ def buy_FirstCoin(walletData, coinTicker, leverage):
 
         # available = float(walletData['available_balance'])
         usedMargin = float(walletData['used_margin'])
-        orderQty = get_TradeQty(walletData, 20, int(leverage), coinTicker)
+        orderQty = get_TradeQty(walletData, 40, int(leverage), coinTicker)
         print("orderQty : ", orderQty)
 
         if usedMargin <= 0:
@@ -301,7 +301,7 @@ def set_SpiderLine(wallet, currentPrice, coinTicker, leverage, isFirst):
             print("entryPrice : ", entryPrice)
 
             # 한번에 매수할 수량을 구함
-            orderQty = get_TradeQty(wallet, 20, int(leverage), coinTicker)
+            orderQty = get_TradeQty(wallet, 40, int(leverage), coinTicker)
             print("거미줄 orderQty : ", orderQty)
 
             # copyOrderList = []
